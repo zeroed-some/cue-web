@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture DSP - Web Audio Port</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Gesture DSP - Web Audio Port</h1>
+        </header>
+        
+        <section class="controls">
+            <div class="control-group">
+                <button id="startCamera" class="btn btn-primary">Start Camera</button>
+                <select id="audioSelect" class="select">
+                    <option value="">Select Audio File...</option>
+                    <option value="__demo__">Generated Demo</option>
+                    <option disabled>──────────</option>
+                </select>
+                <button id="loadFile" class="btn">Upload WAV</button>
+                <input type="file" id="fileInput" accept="audio/wav" hidden>
+                <button id="playPause" class="btn btn-success" disabled>Play</button>
+            </div>
+            
+            <div class="ir-controls">
+                <label for="irSelect">Impulse Response:</label>
+                <select id="irSelect" class="select">
+                    <option value="none">None</option>
+                    <option value="hall">Hall</option>
+                    <option value="room">Room</option>
+                    <option value="plate">Plate</option>
+                </select>
+                <button id="loadIR" class="btn btn-small">Load Custom IR</button>
+                <input type="file" id="irInput" accept="audio/wav" hidden>
+            </div>
+            
+            <div class="status" id="status">Ready to start...</div>
+        </section>
+        
+        <main class="main-area">
+            <section class="video-section">
+                <div class="video-container">
+                    <canvas id="videoCanvas" width="640" height="480"></canvas>
+                    <div class="effect-zones" id="effectZones"></div>
+                    <div class="cue-indicator" id="cueIndicator">CUE TRIGGERED</div>
+                </div>
+            </section>
+            
+            <aside class="params-section">
+                <h3>Current Effect: <span id="currentEffect">None</span></h3>
+                
+                <div class="param-visualizer">
+                    <div class="param-bar">
+                        <div class="param-fill" id="paramFill"></div>
+                    </div>
+                    <div class="param-labels">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <dl class="info-list">
+                        <dt>Parameter:</dt>
+                        <dd id="paramValue">0.50</dd>
+                        <dt>Raw Param:</dt>
+                        <dd id="rawParamValue">0.50</dd>
+                        <dt>Hand Detected:</dt>
+                        <dd id="handStatus">No</dd>
+                    </dl>
+                </div>
+                
+                <div class="info-box instructions">
+                    <h4>Instructions:</h4>
+                    <ol>
+                        <li>Hold a neon pink/orange post-it</li>
+                        <li>Move horizontally to select effect</li>
+                        <li>Hold a teal post-it with other hand</li>
+                        <li>Move teal post-it vertically for parameter</li>
+                        <li>Keep post-it in same zone for cue trigger</li>
+                    </ol>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
