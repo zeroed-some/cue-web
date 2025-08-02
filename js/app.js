@@ -212,13 +212,15 @@ class GestureDSPApp {
     }
     
     setupGestureCallbacks() {
-        this.gestureDetector.onHandsDetected = (redHand, yellowHand) => {
-            if (redHand) {
-                this.handleEffectSelection(redHand);
+        this.gestureDetector.onHandsDetected = (yellowHand, greenHand) => {
+            // Yellow hand for horizontal effect selection
+            if (yellowHand) {
+                this.handleEffectSelection(yellowHand);
             }
             
-            if (yellowHand) {
-                this.handleParameterControl(yellowHand);
+            // Green hand for vertical parameter control
+            if (greenHand) {
+                this.handleParameterControl(greenHand);
             } else {
                 // Slowly return to center when no hand detected
                 if (this.audioEngine.audioContext && this.audioEngine.effects) {
@@ -228,9 +230,11 @@ class GestureDSPApp {
                 this.updateParameterDisplay();
             }
             
-            // Update hand status
-            document.getElementById('handStatus').textContent = 
-                redHand || yellowHand ? 'Yes' : 'No';
+            // Update hand status with confidence
+            const status = [];
+            if (yellowHand) status.push(`Yellow: ${Math.round(yellowHand.confidence * 100)}%`);
+            if (greenHand) status.push(`Green: ${Math.round(greenHand.confidence * 100)}%`);
+            document.getElementById('handStatus').textContent = status.length > 0 ? status.join(', ') : 'No';
         };
     }
     
