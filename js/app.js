@@ -144,6 +144,9 @@ class GestureDSPApp {
         // Camera control
         document.getElementById('startCamera').addEventListener('click', () => this.startCamera());
         
+        // Microphone control
+        document.getElementById('microphoneToggle').addEventListener('click', () => this.toggleMicrophone());
+        
         // Audio selection
         document.getElementById('audioSelect').addEventListener('change', async (e) => {
             const value = e.target.value;
@@ -324,9 +327,37 @@ class GestureDSPApp {
             await this.gestureDetector.start();
             this.updateStatus('Camera active - wear colored gloves!');
             document.getElementById('startCamera').disabled = true;
+            document.getElementById('microphoneToggle').disabled = false;
         } catch (err) {
             console.error('Error starting camera:', err);
             this.updateStatus('Camera access denied');
+        }
+    }
+    
+    async toggleMicrophone() {
+        const micBtn = document.getElementById('microphoneToggle');
+        
+        try {
+            if (this.audioEngine.isMicrophoneActive) {
+                this.audioEngine.stopMicrophone();
+                micBtn.textContent = 'Start Microphone';
+                micBtn.className = 'btn btn-warning';
+                this.updateStatus('Microphone stopped');
+            } else {
+                await this.audioEngine.startMicrophone();
+                micBtn.textContent = 'Stop Microphone';
+                micBtn.className = 'btn btn-danger';
+                this.updateStatus('Live microphone active! Use gestures to control effects.');
+            }
+        } catch (err) {
+            console.error('Microphone error:', err);
+            if (err.name === 'NotAllowedError') {
+                this.updateStatus('Microphone permission denied. Please allow microphone access.');
+            } else if (err.name === 'NotFoundError') {
+                this.updateStatus('No microphone found. Please connect a microphone.');
+            } else {
+                this.updateStatus('Microphone error: ' + err.message);
+            }
         }
     }
     

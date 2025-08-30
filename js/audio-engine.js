@@ -8,6 +8,11 @@ export class AudioEngine {
         this.isPlaying = false;
         this.audioBuffer = null;
         
+        // Microphone support
+        this.microphoneStream = null;
+        this.microphoneSource = null;
+        this.isMicrophoneActive = false;
+        
         this.currentEffectIndex = 0;
         this.currentParam = 0.5;
         this.rawParam = 0.5;
@@ -434,6 +439,43 @@ export class AudioEngine {
             console.error('Error loading IR:', err);
             return false;
         }
+    }
+    
+    async startMicrophone() {
+        try {
+            await this.init();
+            
+            this.microphoneStream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false
+                } 
+            });
+            
+            this.microphoneSource = this.audioContext.createMediaStreamSource(this.microphoneStream);
+            this.microphoneSource.connect(this.inputGain);
+            
+            this.isMicrophoneActive = true;
+            return true;
+        } catch (err) {
+            console.error('Error starting microphone:', err);
+            throw err;
+        }
+    }
+    
+    stopMicrophone() {
+        if (this.microphoneSource) {
+            this.microphoneSource.disconnect();
+            this.microphoneSource = null;
+        }
+        
+        if (this.microphoneStream) {
+            this.microphoneStream.getTracks().forEach(track => track.stop());
+            this.microphoneStream = null;
+        }
+        
+        this.isMicrophoneActive = false;
     }
     
     play() {
